@@ -1,9 +1,6 @@
 <template>
   <div class="hello">
-    <input type="text" v-model="msg">
-    <p>msg: {{msg}}</p>
-    <p>computed msg: {{computedMsg}}</p>
-    <button @click="greet">Greet</button>
+    <div v-for="(msg, index) in msgs" :key="index"></div>
   </div>
 </template>
 
@@ -11,8 +8,7 @@
 export default {
   data () {
     return {
-      msg: '',
-      computedMsg: ''
+      msgs: []
     }
   },
   methods: {

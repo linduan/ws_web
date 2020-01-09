@@ -24,18 +24,20 @@ export default {
         { user: '系统消息', content: 'XXX加入聊天室！' },
         { user: '系统消息', content: 'XXX加入聊天室！' },
         { user: '系统消息', content: 'XXX加入聊天室！' }
-      ]
+      ],
+      ws: null
     }
   },
   methods: {
     // 发送消息
     sendMsg () {
       console.log(this.user.name, this.msg)
-      this.msg = ''
+      this.ws.send(this.msg)
+      // this.msg = ''
     },
     // socket连接
     link () {
-      let ws = new WebSocket('ws://localhost:7001/')
+      const ws = new WebSocket('ws://localhost:7002/')
       // webSocket 连接事件
       ws.onopen = () => {
         ws.send('user link...')
@@ -53,10 +55,12 @@ export default {
         console.log('websocket error...')
         console.log(e)
       }
+
+      this.ws = ws
     }
   },
   created () {
-    this.link()
+    // this.link()
   }
 }
 </script>

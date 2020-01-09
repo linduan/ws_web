@@ -2,8 +2,8 @@
   <div class="home">
     <div class="client">
       <!-- <client/> -->
-      <!-- <client/> -->
-      <socketio/>
+      <client1/>
+      <!-- <socketio/> -->
     </div>
     <div class="server">
       <server/>
@@ -12,12 +12,13 @@
 </template>
 
 <script type="ts">
-import Client from '@/components/client'
+import Client from '@/components/client1'
+import Client1 from '@/components/client1'
 import Server from '@/components/server'
 import Socketio from '@/components/socket_io'
 export default {
   name: 'Home',
-  components: { Client, Server, Socketio }
+  components: { Client, Server, Socketio, Client1 }
 }
 </script>
 <style lang="stylus" scoped>
