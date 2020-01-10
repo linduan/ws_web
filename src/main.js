@@ -14,4 +14,4 @@ const vue = new Vue({
 }).$mount('#app')
 
 // 全局注册socket
-Vue.prototype.$socket = new Socket(7002, vue)
+// Vue.prototype.$socket = new Socket(7002, vue)

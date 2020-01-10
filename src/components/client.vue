@@ -1,10 +1,16 @@
 <template>
   <div class="client">
-    <div class="user">用户id:  {{user.name}}</div>
+    <div class="user">昵称:  {{user}}</div>
     <div class="list">
       <div v-for="(msg, index) in msgs" :key="index">
-        <span class="name">{{msg.user}}:&nbsp;</span>
-        <span class="content">{{msg.content}}</span>
+        <div v-if="msg.user !== user">
+          <span class="name">{{msg.user}}:&nbsp;</span>
+          <span class="content">{{msg.msg}}</span>
+        </div>
+        <div v-else style="text-align: right;">
+          <span class="content">{{msg.msg}}</span>
+          <span class="advantor">我</span>
+        </div>
       </div>
     </div>
     <div class="input">
@@ -19,48 +25,62 @@ export default {
   data () {
     return {
       msg: '',
-      user: { name: '用户一' },
-      msgs: [
-        { user: '系统消息', content: 'XXX加入聊天室！' },
-        { user: '系统消息', content: 'XXX加入聊天室！' },
-        { user: '系统消息', content: 'XXX加入聊天室！' }
-      ],
+      user: null,
+      msgs: [],
       ws: null
     }
   },
   methods: {
     // 发送消息
     sendMsg () {
-      console.log(this.user.name, this.msg)
-      this.ws.send(this.msg)
-      // this.msg = ''
+      let msg = {
+        msg: this.msg,
+        user: this.user
+      }
+      this.ws.send(JSON.stringify(msg))
+      this.msgs = [...this.msgs, msg]
+      this.msg = ''
     },
     // socket连接
     link () {
-      const ws = new WebSocket('ws://localhost:7002/')
-      // webSocket 连接事件
-      ws.onopen = () => {
-        ws.send('user link...')
-      }
+      // 新建websocke实例
+      // 所有的操作都是采用消息的方式触发的，不会阻塞UI，
+      // 使得UI有更快的响应时间，得到更好的用户体验
+      // WebSocket协议的URL使用ws://开头，安全的WebSocket协议使用wss://开头
+      const ws = this.ws || new WebSocket('ws://localhost:7002/')
+
+      // 连接事件: 客户端和服务连接成功后，会触发onopen消息
+      ws.onopen = () => console.log('websocket连接成功...')
+
       // webSocket 接收到消息
       ws.onmessage = res => {
-        console.log('onmessage:', res)
-      }
-      // webScoket 关闭事件
-      ws.onclose = () => {
-        console.log('onclose')
-      }
-      // webScoket 关闭事件
-      ws.onerror = (e) => {
-        console.log('websocket error...')
-        console.log(e)
+        console.log('websocket接收到新消息...')
+        this.receiveMSg(res)
       }
 
+      // 关闭事件：当接收到服务端发送的关闭连接请求时， 就会触发onclose消息
+      ws.onclose = res => console.log('websocket关闭...', res)
+
+      // 错误事件: 连接失败，发送、接收数据 失败或者处理数据出现错误
+      ws.onerror = (e) =>  console.log('websocket出错...', e)
+
       this.ws = ws
+    },
+    receiveMSg ({ data } = {}) {
+      let msg = JSON.parse(data)
+      const {user, type} = msg
+      if (!this.user && type === 'open') {
+        this.user = user
+        return true
+      }
+      if (user !== this.user) {
+        this.msgs = [...this.msgs, msg]
+      }
+      console.log(this.msgs)
     }
   },
   created () {
-    // this.link()
+    this.link()
   }
 }
 </script>
@@ -72,6 +92,21 @@ export default {
   padding 10px
   margin-bottom 20px
   text-align left
+  .name
+    display inline-block
+    width 100px
+  .content
+    border 1px dotted #ccc
+    padding 2px 5px
+  .advantor
+    display inline-block
+    width 30px
+    height 30px
+    border 1px solid #bbbbbb
+    border-radius 50%
+    text-align center
+    line-height 30px
+    margin-left 20px
   .list
     height 200px
     font-size 16px

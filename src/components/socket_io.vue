@@ -1,11 +1,7 @@
 <template>
   <div class="client">
-    <div class="user">用户id:  {{user.name}}</div>
     <div class="list">
-      <div v-for="(msg, index) in msgs" :key="index">
-        <span class="name">{{msg.user}}:&nbsp;</span>
-        <span class="content">{{msg.content}}</span>
-      </div>
+      <div v-for="(msg, index) in msgs" :key="index">{{msg}}</div>
     </div>
     <div class="input">
       <input type="text" v-model="msg">
@@ -21,27 +17,30 @@ export default {
   data () {
     return {
       msg: '',
-      user: { name: '用户一' },
-      msgs: [
-        { user: '系统消息', content: 'XXX加入聊天室！' },
-        { user: '系统消息', content: 'XXX加入聊天室！' },
-        { user: '系统消息', content: 'XXX加入聊天室！' }
-      ]
+      msgs: [],
+      socket: null
     }
   },
   methods: {
     // 发送消息
     sendMsg () {
-      console.log(this.user.name, this.msg)
+      this.socket.emit('message', this.msg)
       this.msg = ''
     },
     // 创建socket连接
     creatSocket () {
-      const socket = io('ws://localhost:7001/')
-      socket.on('message', res => console.log('message', res))
-      socket.on('error', res => console.log('errror:', res))
-      socket.on('connect', res => console.log('connect', res))
-      socket.on('close', res => console.log('close', res))
+      const socket = this.socket || io('ws://localhost:7001/')
+      socket.on('connect', () => console.log('socket.io 连接成功'))
+      socket.on('message', res => {
+        console.log('socket.io 收到消息', res)
+        this.receiveMSg(res)
+      })
+      socket.on('error', res => console.log('socket.io 异常', res))
+      socket.on('close', res => console.log('socket.io 关闭', res))
+      this.socket = socket
+    },
+    receiveMSg (msg) {
+      this.msgs = [...this.msgs, msg]
     }
   },
   created () {
@@ -57,6 +56,21 @@ export default {
   padding 10px
   margin-bottom 20px
   text-align left
+  .name
+    display inline-block
+    width 100px
+  .content
+    border 1px dotted #ccc
+    padding 2px 5px
+  .advantor
+    display inline-block
+    width 30px
+    height 30px
+    border 1px solid #bbbbbb
+    border-radius 50%
+    text-align center
+    line-height 30px
+    margin-left 20px
   .list
     height 200px
     font-size 16px

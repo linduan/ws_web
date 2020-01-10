@@ -1,13 +1,13 @@
 <template>
   <div class="client">
-    <div class="user">用户:  {{user}}</div>
+    <div class="user">昵称:  {{user}}</div>
     <div class="list">
       <div v-for="(msg, index) in msgs" :key="index">
         <div v-if="msg.user !== user">
           <span class="name">{{msg.user}}:&nbsp;</span>
           <span class="content">{{msg.msg}}</span>
         </div>
-        <div v-else style="float: right;">
+        <div v-else style="text-align: right;">
           <span class="content">{{msg.msg}}</span>
           <span class="advantor">我</span>
         </div>
@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       msg: '',
-      user: '',
+      user: null,
       msgs: [],
       ws: null
     }
@@ -46,14 +46,13 @@ export default {
   created () {
     this.$bus.on('onmessage', res => {
       const {user, type} = res
-      if (type === 'open') {
+      if (!this.user && type === 'open') {
         this.user = user
         return true
       }
       if (user !== this.user) {
         this.msgs = [...this.msgs, res]
       }
-      console.log(this.msgs)
     })
   }
 }
@@ -66,6 +65,9 @@ export default {
   padding 10px
   margin-bottom 20px
   text-align left
+  .name
+    display inline-block
+    width 100px
   .content
     border 1px dotted #ccc
     padding 2px 5px

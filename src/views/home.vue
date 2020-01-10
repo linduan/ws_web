@@ -1,34 +1,27 @@
 <template>
   <div class="home">
     <div class="client">
-      <!-- <client/> -->
-      <client1/>
+      <client/>
+      <!-- <client1/> -->
       <!-- <socketio/> -->
-    </div>
-    <div class="server">
-      <server/>
     </div>
   </div>
 </template>
 
 <script type="ts">
-import Client from '@/components/client1'
+import Client from '@/components/client'
 import Client1 from '@/components/client1'
-import Server from '@/components/server'
 import Socketio from '@/components/socket_io'
 export default {
   name: 'Home',
-  components: { Client, Server, Socketio, Client1 }
+  components: { Client, Socketio, Client1 }
 }
 </script>
 <style lang="stylus" scoped>
   .home
     padding 20px
-    display flex
-    justify-content space-around
+    width 80%
+    margin 0 auto
     .client
-      flex 1
-      margin-right 20px
-    .server
-      flex 1
+      width 100%
 </style>

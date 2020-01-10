@@ -17,7 +17,7 @@ export default class Socket {
 
     // webSocket 连接事件
     ws.onopen = res => {
-      console.log('客户端连接成功：', res.type)
+      console.log('websock连接成功：', res.type)
     }
 
     // webSocket 接收到消息
@@ -33,13 +33,13 @@ export default class Socket {
     // webScoket 关闭事件
     ws.onclose = () => {
       this.bus.emit('onclose', 'close')
-      console.log('onclose')
+      console.log('websock关闭...')
     }
 
     // webScoket 关闭事件
     ws.onerror = e => {
       this.bus.emit('onerror', e)
-      console.log('websocket error...', e)
+      console.log('websocket异常...', e)
     }
 
     // 记录socket
